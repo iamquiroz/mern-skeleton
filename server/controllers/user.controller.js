@@ -8,6 +8,12 @@ const create = async (req, res) => {
     await user.save();
     return res.status(200).json({
       message: "Successfully signed up!",
+        user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (err) {
     return res.status(400).json({
@@ -17,7 +23,7 @@ const create = async (req, res) => {
 };
 const list = async (req, res) => {
   try {
-    let users = await User.find().select("name email updated created");
+    let users = await User.find().select("name email updated created role");
     res.json(users);
   } catch (err) {
     return res.status(400).json({
@@ -66,7 +72,17 @@ const remove = async (req, res) => {
     let deletedUser = await user.remove();
     deletedUser.hashed_password = undefined;
     deletedUser.salt = undefined;
-    res.json(deletedUser);
+    res.status(201).json({
+      message: "User deleted successfully",
+  
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    
+    })
   } catch (err) {
     return res.status(400).json({
       error: errorHandler.getErrorMessage(err),

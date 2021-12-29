@@ -23,6 +23,10 @@ const UserSchema = new mongoose.Schema({
   created: {
     type: Date,
     default: Date.now
+  },
+  role:{
+    type: Boolean,
+    required: "Role is required"
   }
 })
 

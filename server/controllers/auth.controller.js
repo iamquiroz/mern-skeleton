@@ -17,7 +17,7 @@ const signin = async (req, res) => {
         .send({ error: "Email and password don't match." });
     }
 
-    const token = jwt.sign({ _id: user.id }, config.jwtSecret);
+    const token = jwt.sign({ _id: user.id, role: user.role }, config.jwtSecret);
 
     res.cookie("t", token, { expire: new Date() + 9999 });
     return res.json({
@@ -26,6 +26,7 @@ const signin = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
       },
     });
   } catch (err) {
@@ -41,17 +42,20 @@ const signout = (req, res) => {
 
 const requireSignin = expressJwt({
   secret: config.jwtSecret,
-   algorithms: ['sha1', 'RS256', 'HS256'],
-  userProperty: "auth"
+  algorithms: ["sha1", "RS256", "HS256"],
+  userProperty: "auth",
 });
 
-const hasAuthorization = (req, res) => {
-  const authorized = req.profile && req.auth && req.profile._id == req.auth._id;
+const hasAuthorization = (req, res,next) => {
+  //  const authorized = req.profile && req.auth && req.profile._id == req.auth._id;
+  const authorized = req.auth.role == true;
+
   if (!authorized) {
     return res.status("403").json({
       error: "User is not authorized",
     });
   }
+
   next();
 };
 
