@@ -9,7 +9,7 @@ router.route("/api/users/")
   .post(userCtrl.create);
 
 router.route("/api/users/:userId")
-  .get( userCtrl.read)
+  .get((authCtrl.requireSignin, userCtrl.read))
   .put(userCtrl.update)
   .delete( userCtrl.remove);
 

@@ -2,12 +2,16 @@ import User from "../models/user.model";
 import jwt from "jsonwebtoken";
 import expressJwt from "express-jwt";
 import config from "./../../config/config";
-import webpackNodeExternals from "webpack-node-externals";
+
 
 const signin = async (req, res) => {
   try {
     let user = await User.findOne({ email: req.body.email });
-    if (!user) return res.status("401").json({ error: "User not found" });
+    if (!user){
+        return res.status(401).json({
+          error:"user not found"
+        })
+    } 
     if (!user.authenticate(req.body.password)) {
       return res
         .status("401")
