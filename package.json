@@ -6,7 +6,8 @@
   "author": "Josh W. <sdkjqg@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "development": "nodemon"
+    "development": "nodemon",
+    "dev": "nodemon"
   },
   "keywords": [
     "node"

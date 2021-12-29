@@ -21,6 +21,7 @@ app.use(helmet());
 // enable CORS - Cross Origin Resource Sharing
 app.use(cors());
 
+// mount routes
 app.use("/", userRoutes);
 app.use("/", authRoutes);
 
@@ -28,4 +29,30 @@ app.get("/", (req, res) => {
   res.status(200).send(Template());
 });
 
+// Catch unauthorised errors
+
+/*
+- The code is trying to authorize a user with the username "admin".
+- If it is successful, then the code sends back an HTTP response with status 
+  code 200 and JSON data.
+- The data contains information about the user's account such as their 
+  email address and password.
+
+- The first thing that happens in this function is that we check if there
+   was an error by checking for err.name === 'UnauthorizedError'.
+- If there was no error, then we send back a success message with
+ status code 200 and JSON data containing information about the
+  user's account such as their email address and password.
+–
+- The code will send a 401 Unauthorized error to the client if they are 
+  not authorized.
+  */
+app.use((err, req, res, next) => {
+  if (err.name === "UnauthorizedError") {
+    res.status(401).json({ error: err.name + ": " + err.message });
+  } else if (err) {
+    res.status(400).json({ error: err.name + ": " + err.message });
+    console.log(err);
+  }
+});
 export default app;

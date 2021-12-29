@@ -1,20 +1,23 @@
-import config from "./../config/config";
-import app from "./express";
+import config from './../config/config'
+import app from './express'
+import mongoose from 'mongoose'
 
-const { dbConnection } = require("../database/config");
 
-class Server {
-  constructor() {
-    // Connect to Database()
-    this.connectionDB();
-  }
-  async connectionDB() {
-    await dbConnection();
-  }
-}
+
+// Connection URL
+mongoose.Promise = global.Promise
+mongoose
+  .connect(
+   config.mongoUri, 
+    { useNewUrlParser: true }
+  ) // Adding new mongo url parser
+  .then(() => console.log('MongoDB Connected...'))
+  .catch(err => console.log(err));
+
+
 app.listen(config.port, (err) => {
   if (err) {
-    console.log(err);
+    console.log(err)
   }
-  console.info("Server started on port %s.", config.port);
-});
+  console.info('Server started on port %s.', config.port)
+})
