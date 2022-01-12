@@ -76,6 +76,7 @@ const remove = async (req, res) => {
       message: "User deleted successfully",
   
       user: {
+        
         _id: user._id,
         name: user.name,
         email: user.email,
