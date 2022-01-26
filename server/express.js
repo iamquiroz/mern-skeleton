@@ -8,6 +8,7 @@ import helmet from 'helmet'
 import Template from './../template'
 import userRoutes from './routes/user.routes'
 import authRoutes from './routes/auth.routes'
+import postRouter from './routes/post.routes'
 
 // modules for server side rendering
 import React from 'react'
