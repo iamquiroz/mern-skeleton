@@ -1,8 +1,7 @@
 import Post from "../models/post.model";
-import errorHandler from "./../helpers/dbErrorHandler";
+import errorHandler from "../helpers/dbErrorHandler";
 import formidable from "formidable";
 import fs from "fs";
-import { Typography } from "@material-ui/core";
 
 const create = (req, res, next) => {
   let form = new formidable.IncomingForm();
@@ -22,8 +21,10 @@ const create = (req, res, next) => {
     try {
       let result = await post.save();
       res.json(result);
-    } catch (error) {
-      error: errorHandler.getErrorMessage(error);
+    } catch (err) {
+      return res.status(400).json({
+        error: errorHandler.getErrorMessage(err),
+      });
     }
   });
 };
@@ -31,12 +32,13 @@ const create = (req, res, next) => {
 const postByID = async (req, res, next, id) => {
   try {
     let post = await Post.findById(id).populate("postedBy", "_id name").exec();
-    if (!post) {
-      return res.status("400").json({ error: "Post not found" });
-      req.post = post;
-      next();
-    }
-  } catch (error) {
+    if (!post)
+      return res.status("400").json({
+        error: "Post not found",
+      });
+    req.post = post;
+    next();
+  } catch (err) {
     return res.status("400").json({
       error: "Could not retrieve use post",
     });
@@ -51,9 +53,9 @@ const listByUser = async (req, res) => {
       .sort("-created")
       .exec();
     res.json(posts);
-  } catch (error) {
+  } catch (err) {
     return res.status(400).json({
-      error: errorHandler.getErrorMessage(error),
+      error: errorHandler.getErrorMessage(err),
     });
   }
 };
@@ -68,9 +70,9 @@ const listNewsFeed = async (req, res) => {
       .sort("-created")
       .exec();
     res.json(posts);
-  } catch (error) {
+  } catch (err) {
     return res.status(400).json({
-      error: errorHandler.getErrorMessage(error),
+      error: errorHandler.getErrorMessage(err),
     });
   }
 };
@@ -106,6 +108,7 @@ const like = async (req, res) => {
     });
   }
 };
+
 const unlike = async (req, res) => {
   try {
     let result = await Post.findByIdAndUpdate(
@@ -122,7 +125,7 @@ const unlike = async (req, res) => {
 };
 
 const comment = async (req, res) => {
-  let comment = req.body.comment;
+  let comment = req.body.comment;jjjjzzsc
   comment.postedBy = req.body.userId;
   try {
     let result = await Post.findByIdAndUpdate(
@@ -140,7 +143,6 @@ const comment = async (req, res) => {
     });
   }
 };
-
 const uncomment = async (req, res) => {
   let comment = req.body.comment;
   try {
@@ -161,7 +163,7 @@ const uncomment = async (req, res) => {
 };
 
 const isPoster = (req, res, next) => {
-  let isPoster = req.post && req.auth && req.post.POstedBy._id == req.auth._id;
+  let isPoster = req.post && req.auth && req.post.postedBy._id == req.auth._id;
   if (!isPoster) {
     return res.status("403").json({
       error: "User is not authorized",
@@ -169,14 +171,16 @@ const isPoster = (req, res, next) => {
   }
   next();
 };
+
 export default {
-  create,
-  postByID,
   listByUser,
   listNewsFeed,
+  create,
+  postByID,
   remove,
   photo,
   like,
+  unlike,
   comment,
   uncomment,
   isPoster,
